@@ -19,6 +19,7 @@ class DropdownView(ui.View):
         self.button.action=self.open_finder
         
         self.base=os.path.expanduser('~/Documents')
+        self.icloudpath='/private/var/mobile/Library/Mobile Documents/iCloud~com~omz-software~Pythonista3/Documents'
         self._abort=False
         self.items=items
         self.button.flex='l'
@@ -131,7 +132,7 @@ class DropdownView(ui.View):
 if __name__=='__main__':
     d=DropdownView()
 
-    def file_generator(base=os.path.expanduser('~/Documents'),abortfcn=None):
+    def file_generator(base,icloud,abortfcn=None):
      if not abortfcn:
         abortfcn=lambda : False
      def iterfn():

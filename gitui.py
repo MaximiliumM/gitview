@@ -224,13 +224,17 @@ class repoView (object):
             self.refresh()
             
 #Get the parent git repo, if there is one
-    def _repo_path(self):
-        return os.path.join(self.view['repo'].base, self.view['repo'].text)
+    def _repo_path(self, path):
+        repo_path = os.path.join(path, self.view['repo'].text)
+        return repo_path
         
     def _get_repo(self):
             try:
-                repopath=self._repo_path()
+                repopath=self._repo_path(self.view['repo'].base)
                 repobase=self._find_repo(repopath)
+                if repobase is None:
+                    repopath=self._repo_path(self.view['repo'].icloudpath)
+                    repobase=self._find_repo(repopath)
                 if repobase:
                     return Gittle(repobase)
             except:
@@ -635,6 +639,8 @@ class repoView (object):
         import show_log
         show_log.main(self)
         
+    def icloud_switch(self, sender):
+        fdd.icloud = sender.value
 
 
 r=repoView()
@@ -642,6 +648,7 @@ v=ui.load_view('gitui')
 r.view=v
 fdd=v['repo']
 fdd.filter='.git'
+fdd.icloud=v['icloud_switch'].value
 fdd.textfield.action=r.did_select_repo
 v['branch'].items=r.branch_iterator
 v['remotebranch'].items=r.remote_branches_iterator
@@ -656,6 +663,7 @@ v['clone'].action=r.clone_action
 v['new'].action=r.new_action
 v['resetPW'].action=r.resetPW
 v['log'].action=r.log_action
+v['icloud_switch'].action=r.icloud_switch
 #load current repo
 editorpath=os.path.split(editor.get_path())[0]
 if editorpath.startswith('/var'):
